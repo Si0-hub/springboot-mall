@@ -52,7 +52,7 @@ public class ProductController {
         page.setLimit(limit);
         page.setOffset(offset);
         page.setTotal(total);
-        page.setResults(productList);
+        page.setResult(productList);
 
         return ResponseEntity.status(HttpStatus.OK).body(page);
     }

@@ -1,6 +1,7 @@
 package com.john.springbootmall.dao.impl;
 
 import com.john.springbootmall.dao.OrderDao;
+import com.john.springbootmall.dto.OrderQueryParams;
 import com.john.springbootmall.model.Order;
 import com.john.springbootmall.model.OrderItem;
 import com.john.springbootmall.rowmapper.OrderItemRowMapper;
@@ -22,6 +23,40 @@ public class OrderDaoImpl implements OrderDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT count(*) FROM `order` WHERE user_id = :userId";
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("userId", orderQueryParams.getUserId());
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, queryMap, Integer.class);
+
+        return total;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date "
+                   + "FROM `order` "
+                   + "WHERE user_id = :userId"
+                   + "ORDER BY created_date DESC";
+
+
+
+        // 條件
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("userId", orderQueryParams.getUserId());
+
+        // 分頁
+        queryMap.put("limit", orderQueryParams.getLimt());
+        queryMap.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, queryMap, new OrderRowMapper());
+
+        return orderList;
+    }
 
     @Override
     public Order getOrderById(Integer orderId) {

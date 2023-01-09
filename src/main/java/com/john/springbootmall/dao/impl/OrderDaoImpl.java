@@ -40,7 +40,7 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> getOrders(OrderQueryParams orderQueryParams) {
         String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date "
                    + "FROM `order` "
-                   + "WHERE user_id = :userId"
+                   + "WHERE user_id = :userId "
                    + "ORDER BY created_date DESC";
 
 

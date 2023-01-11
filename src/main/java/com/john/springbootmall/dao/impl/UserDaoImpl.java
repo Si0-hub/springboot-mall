@@ -2,9 +2,7 @@ package com.john.springbootmall.dao.impl;
 
 import com.john.springbootmall.dao.UserDao;
 import com.john.springbootmall.dto.UserRegisterRequest;
-import com.john.springbootmall.model.Product;
 import com.john.springbootmall.model.User;
-import com.john.springbootmall.rowmapper.ProductRowMapper;
 import com.john.springbootmall.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

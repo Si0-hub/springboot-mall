@@ -1,60 +1,26 @@
 package com.john.springbootmall.controller;
 
-import com.john.springbootmall.constant.ProductCategory;
-import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
-import com.john.springbootmall.model.Product;
+import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
-import com.john.springbootmall.util.Page;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/product")
 public class ProductController {
 
-    @Autowired
     private ProductService productService;
 
-    @GetMapping("/products")
-    public ResponseEntity<Page<Product>> getProducts(
-            @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort,
-            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset
-    ) {
-        ProductQueryParams productQueryParams = new ProductQueryParams();
-        productQueryParams.setCategory(category);
-        productQueryParams.setSearch(search);
-        productQueryParams.setOrderBy(orderBy);
-        productQueryParams.setSort(sort);
-        productQueryParams.setLimt(limit);
-        productQueryParams.setOffset(offset);
-
-        // 取得 商品的列表
-        List<Product> productList = productService.getProducts(productQueryParams);
-
-        // 取得 商品總比數
-        Integer total = productService.countProduct(productQueryParams);
-
-        // 分頁
-        Page<Product> page = new Page<>();
-        page.setLimit(limit);
-        page.setOffset(offset);
-        page.setTotal(total);
-        page.setResult(productList);
-
-        return ResponseEntity.status(HttpStatus.OK).body(page);
+    @Resource(name = "productServiceImpl")
+    private void setProductService(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping("/products/{productId}")
@@ -70,9 +36,7 @@ public class ProductController {
 
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
-        Integer productId = productService.createProduct(productRequest);
-
-        Product product = productService.getProductById(productId);
+        Product product = productService.createProduct(productRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
@@ -84,15 +48,14 @@ public class ProductController {
         Product product = productService.getProductById(productId);
 
         if (product == null) {
+            System.out.println("Not found product");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         // 修改商品的數據
         productService.updateProduct(productId, productRequest);
 
-        Product updateProduct = productService.getProductById(productId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping("/products/{productId}")
@@ -101,4 +64,37 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+//    @GetMapping("/products")
+//    public ResponseEntity<Page<Product>> getProducts(
+//            @RequestParam(required = false) ProductCategory category,
+//            @RequestParam(required = false) String search,
+//            @RequestParam(defaultValue = "created_date") String orderBy,
+//            @RequestParam(defaultValue = "desc") String sort,
+//            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+//            @RequestParam(defaultValue = "0") @Min(0) Integer offset
+//    ) {
+//        ProductQueryParams productQueryParams = new ProductQueryParams();
+//        productQueryParams.setCategory(category);
+//        productQueryParams.setSearch(search);
+//        productQueryParams.setOrderBy(orderBy);
+//        productQueryParams.setSort(sort);
+//        productQueryParams.setLimt(limit);
+//        productQueryParams.setOffset(offset);
+//
+//        // 取得 商品的列表
+//        List<Product> productList = productService.getProducts(productQueryParams);
+//
+//        // 取得 商品總比數
+//        Integer total = productService.countProduct(productQueryParams);
+//
+//        // 分頁
+//        Page<Product> page = new Page<>();
+//        page.setLimit(limit);
+//        page.setOffset(offset);
+//        page.setTotal(total);
+//        page.setResult(productList);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(page);
+//    }
 }

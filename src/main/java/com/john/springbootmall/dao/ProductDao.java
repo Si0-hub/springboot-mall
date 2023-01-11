@@ -1,24 +1,9 @@
 package com.john.springbootmall.dao;
 
-import com.john.springbootmall.dto.ProductQueryParams;
-import com.john.springbootmall.dto.ProductRequest;
-import com.john.springbootmall.model.Product;
+import com.john.springbootmall.entity.Product;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
+public interface ProductDao extends CrudRepository<Product, Integer > {
 
-public interface ProductDao {
-
-    Integer countProduct(ProductQueryParams productQueryParams);
-
-    List<Product> getProducts(ProductQueryParams productQueryParams);
-
-    Product getProdictById(Integer productId);
-
-    Integer createProduct(ProductRequest productRequest);
-
-    void updateProduct(Integer productId, ProductRequest productRequest);
-
-    void updateStock(Integer productId, Integer stock);
-
-    void deleteProductById(Integer productId);
+    Product findByProductId(Integer productId);
 }

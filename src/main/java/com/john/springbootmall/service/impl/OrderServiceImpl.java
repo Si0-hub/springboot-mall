@@ -8,7 +8,7 @@ import com.john.springbootmall.dto.CreateOrderRequest;
 import com.john.springbootmall.dto.OrderQueryParams;
 import com.john.springbootmall.model.Order;
 import com.john.springbootmall.model.OrderItem;
-import com.john.springbootmall.model.Product;
+import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.model.User;
 import com.john.springbootmall.service.OrderService;
 import org.slf4j.Logger;
@@ -70,21 +70,21 @@ public class OrderServiceImpl implements OrderService {
 
 
         for (BuyItem buyItem : createOrderRequest.getBuyItemList()) {
-            Product product = productDao.getProdictById(buyItem.getProductId());
+            Product product = productDao.findByProductId(buyItem.getProductId());
 
-            if (product == null) {
-                log.warn("商品 {} 不存在!!", buyItem.getProductId());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            } else if (product.getStock() < buyItem.getQuantity()) {
-                log.warn("商品 {} 庫存數量不足，無法購買。剩餘庫存 {}，欲購買數量 {}",
-                        buyItem.getProductId(), product.getStock(), buyItem.getQuantity());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
+//            if (product == null) {
+//                log.warn("商品 {} 不存在!!", buyItem.getProductId());
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//            } else if (product.getStock() < buyItem.getQuantity()) {
+//                log.warn("商品 {} 庫存數量不足，無法購買。剩餘庫存 {}，欲購買數量 {}",
+//                        buyItem.getProductId(), product.getStock(), buyItem.getQuantity());
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//            }
 
             // 扣除商品庫存
-            productDao.updateStock(product.getProductId(), product.getStock() - buyItem.getQuantity());
+//            productDao.updateStock(product.getProductId(), product.getStock() - buyItem.getQuantity());
 
-            int amount = buyItem.getQuantity() * product.getPrice();
+            int amount = '0';
             totalAmount = totalAmount + amount;
 
             OrderItem orderItem = new OrderItem();

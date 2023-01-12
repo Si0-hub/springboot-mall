@@ -1,7 +1,11 @@
 package com.john.springbootmall.service;
 
+import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface ProductService {
 
@@ -13,7 +17,5 @@ public interface ProductService {
 
     void deleteProductById(Integer productId);
 
-//    Integer countProduct(ProductQueryParams productQueryParams);
-//
-//    List<Product> getProducts(ProductQueryParams productQueryParams);
+    Page<Product> getProducts(ProductQueryParams productQueryParams);
 }

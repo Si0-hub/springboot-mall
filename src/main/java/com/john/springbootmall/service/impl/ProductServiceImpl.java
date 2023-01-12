@@ -1,9 +1,14 @@
 package com.john.springbootmall.service.impl;
 
+import com.john.springbootmall.constant.ProductCategory;
 import com.john.springbootmall.dao.ProductDao;
+import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,13 +57,19 @@ public class ProductServiceImpl implements ProductService {
         productDao.deleteById(productId);
     }
 
-//    @Override
-//    public Integer countProduct(ProductQueryParams productQueryParams) {
-//        return productDao.countProduct(productQueryParams);
-//    }
-//
-//    @Override
-//    public List<Product> getProducts(ProductQueryParams productQueryParams) {
-//        return productDao.getProducts(productQueryParams);
-//    }
+    @Override
+    public Page<Product> getProducts(ProductQueryParams productQueryParams) {
+        Pageable pageable = PageRequest.of(productQueryParams.getPage(), productQueryParams.getSize());
+        ProductCategory productCategory = productQueryParams.getCategory();
+
+        Page<Product>  productPage;
+
+        if (productCategory == null) {
+            productPage = productDao.findAll(pageable);
+        } else {
+            productPage = productDao.findAllByCategory(productCategory, pageable);
+        }
+
+        return productPage;
+    }
 }

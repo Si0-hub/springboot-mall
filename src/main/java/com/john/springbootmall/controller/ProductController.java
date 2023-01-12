@@ -1,8 +1,11 @@
 package com.john.springbootmall.controller;
 
+import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,6 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Validated
 @RestController
@@ -65,36 +73,31 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-//    @GetMapping("/products")
-//    public ResponseEntity<Page<Product>> getProducts(
-//            @RequestParam(required = false) ProductCategory category,
-//            @RequestParam(required = false) String search,
-//            @RequestParam(defaultValue = "created_date") String orderBy,
-//            @RequestParam(defaultValue = "desc") String sort,
-//            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
-//            @RequestParam(defaultValue = "0") @Min(0) Integer offset
-//    ) {
-//        ProductQueryParams productQueryParams = new ProductQueryParams();
-//        productQueryParams.setCategory(category);
-//        productQueryParams.setSearch(search);
+    @GetMapping("/products")
+    public ResponseEntity<Map<String, Object>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            @RequestParam(defaultValue = "desc") String sort,
+            @RequestParam(defaultValue = "0") @Max(1000) @Min(0) Integer page,
+            @RequestParam(defaultValue = "5") @Max(100) @Min(5) Integer size
+    ) {
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setPage(page);
+        productQueryParams.setSize(size);
 //        productQueryParams.setOrderBy(orderBy);
 //        productQueryParams.setSort(sort);
-//        productQueryParams.setLimt(limit);
-//        productQueryParams.setOffset(offset);
-//
-//        // 取得 商品的列表
-//        List<Product> productList = productService.getProducts(productQueryParams);
-//
-//        // 取得 商品總比數
-//        Integer total = productService.countProduct(productQueryParams);
-//
-//        // 分頁
-//        Page<Product> page = new Page<>();
-//        page.setLimit(limit);
-//        page.setOffset(offset);
-//        page.setTotal(total);
-//        page.setResult(productList);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(page);
-//    }
+
+        // 取得 商品的列表
+        Page<Product> productPage = productService.getProducts(productQueryParams);
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("dataList", productPage.getContent());
+        response.put("totalPages", productPage.getTotalPages());
+        response.put("totalData", productPage.getTotalElements());
+        response.put("nowPage", productPage.getNumber());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

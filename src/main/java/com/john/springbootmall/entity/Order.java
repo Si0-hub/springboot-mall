@@ -1,43 +1,40 @@
 package com.john.springbootmall.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.john.springbootmall.dto.UserRegisterRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Entity
-@Table(name = "`user`")
+@Table(name = "`order`")
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
-
-    public User(UserRegisterRequest userRegisterRequest) {
-        this.setEmail(userRegisterRequest.getEmail());
-        this.setPassword(userRegisterRequest.getPassword());
-    }
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "order_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Integer orderId;
+
+    @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "email")
-    private String email;
-
-    @JsonIgnore
-    @Column(name = "password")
-    private String password;
+    @Column(name = "total_amount")
+    private Integer totalAmount;
 
     @Column(name = "created_date", updatable = false)
     private Date createdDate;
 
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
+
+    @Transient
+    private List<OrderItem> orderItemList;
 }

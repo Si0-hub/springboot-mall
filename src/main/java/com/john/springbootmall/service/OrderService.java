@@ -2,17 +2,15 @@ package com.john.springbootmall.service;
 
 import com.john.springbootmall.dto.CreateOrderRequest;
 import com.john.springbootmall.dto.OrderQueryParams;
-import com.john.springbootmall.model.Order;
+import com.john.springbootmall.entity.Order;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
-    Integer countOrder(OrderQueryParams orderQueryParams);
+    Map<String, Object> getOrders(OrderQueryParams orderQueryParams);
 
-    List<Order> getOrders(OrderQueryParams orderQueryParams);
-
-    Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest);
-
-    Order getOrderById(Integer orderId);
+    Order createOrder(Integer userId, CreateOrderRequest createOrderRequest);
 }

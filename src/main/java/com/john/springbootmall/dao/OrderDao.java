@@ -1,22 +1,15 @@
 package com.john.springbootmall.dao;
 
-import com.john.springbootmall.dto.OrderQueryParams;
-import com.john.springbootmall.model.Order;
-import com.john.springbootmall.model.OrderItem;
+import com.john.springbootmall.entity.Order;
+import com.john.springbootmall.entity.OrderItem;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Map;
 
-public interface OrderDao {
+public interface OrderDao extends JpaRepository<Order, Integer> {
 
-    Integer countOrder(OrderQueryParams orderQueryParams);
-
-    List<Order> getOrders(OrderQueryParams orderQueryParams);
-
-    Order getOrderById(Integer orderId);
-
-    List<OrderItem> getOrderItemsByOrderId(Integer orderId);
-
-    Integer createOder(Integer userId, int totalAmount);
-
-    void  createOrderItem(Integer orderId, List<OrderItem> orderItemList);
+    Page<Order> findAllByUserId(Integer userId, Pageable pageable);
 }

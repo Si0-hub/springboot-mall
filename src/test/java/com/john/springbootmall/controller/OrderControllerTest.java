@@ -164,37 +164,37 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(2)))
-                .andExpect(jsonPath("$.result[0].orderId", notNullValue()))
-                .andExpect(jsonPath("$.result[0].userId", equalTo(1)))
-                .andExpect(jsonPath("$.result[0].totalAmount", equalTo(100000)))
-                .andExpect(jsonPath("$.result[0].orderItemList", hasSize(1)))
-                .andExpect(jsonPath("$.result[0].createdDate", notNullValue()))
-                .andExpect(jsonPath("$.result[0].lastModifiedDate", notNullValue()))
-                .andExpect(jsonPath("$.result[1].orderId", notNullValue()))
-                .andExpect(jsonPath("$.result[1].userId", equalTo(1)))
-                .andExpect(jsonPath("$.result[1].totalAmount", equalTo(500690)))
-                .andExpect(jsonPath("$.result[1].orderItemList", hasSize(3)))
-                .andExpect(jsonPath("$.result[1].createdDate", notNullValue()))
-                .andExpect(jsonPath("$.result[1].lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(2)))
+                .andExpect(jsonPath("$.dataList[0].orderId", notNullValue()))
+                .andExpect(jsonPath("$.dataList[0].userId", equalTo(1)))
+                .andExpect(jsonPath("$.dataList[0].totalAmount", equalTo(100000)))
+                .andExpect(jsonPath("$.dataList[0].orderItemList", hasSize(1)))
+                .andExpect(jsonPath("$.dataList[0].createdDate", notNullValue()))
+                .andExpect(jsonPath("$.dataList[0].lastModifiedDate", notNullValue()))
+                .andExpect(jsonPath("$.dataList[1].orderId", notNullValue()))
+                .andExpect(jsonPath("$.dataList[1].userId", equalTo(1)))
+                .andExpect(jsonPath("$.dataList[1].totalAmount", equalTo(500690)))
+                .andExpect(jsonPath("$.dataList[1].orderItemList", hasSize(3)))
+                .andExpect(jsonPath("$.dataList[1].createdDate", notNullValue()))
+                .andExpect(jsonPath("$.dataList[1].lastModifiedDate", notNullValue()));
     }
 
     @Test
     public void getOrders_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/users/{userId}/orders", 1)
-                .param("limit", "2")
-                .param("offset", "2");
+                .param("page", "1")
+                .param("size", "2");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(2)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(2)));;
     }
 
     @Test
@@ -204,10 +204,10 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(0)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(0)));
     }
 
     @Test
@@ -217,9 +217,9 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(0)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(0)));
     }
 }

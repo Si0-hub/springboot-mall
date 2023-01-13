@@ -2,61 +2,54 @@ package com.john.springbootmall.controller;
 
 import com.john.springbootmall.dto.CreateOrderRequest;
 import com.john.springbootmall.dto.OrderQueryParams;
-import com.john.springbootmall.model.Order;
+import com.john.springbootmall.entity.Order;
 import com.john.springbootmall.service.OrderService;
-import com.john.springbootmall.util.Page;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Validated
 @RestController
 public class OrderController {
 
-    @Autowired
     private OrderService orderService;
 
+    @Resource(name = "orderServiceImpl")
+    private void setProductService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @GetMapping("/users/{userId}/orders")
-    public  ResponseEntity<Page<Order>> getOrders(
+    public  ResponseEntity<Map<String, Object>> getOrders(
             @PathVariable Integer userId,
-            @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer limit,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset) {
+            @RequestParam(defaultValue = "0") @Max(1000) @Min(0) Integer page,
+            @RequestParam(defaultValue = "5") @Max(100) @Min(0) Integer size) {
 
         OrderQueryParams orderQueryParams = new OrderQueryParams();
         orderQueryParams.setUserId(userId);
-        orderQueryParams.setLimt(limit);
-        orderQueryParams.setOffset(offset);
+        orderQueryParams.setPage(page);
+        orderQueryParams.setSize(size);
 
         // 取得 order List
-        List<Order> orderList = orderService.getOrders(orderQueryParams);
+        Map<String, Object> response = orderService.getOrders(orderQueryParams);
 
-        // 取得 order 總數
-        Integer total =  orderService.countOrder(orderQueryParams);
-
-        // 分頁
-        Page<Order> page = new Page<>();
-        page.setLimit(limit);
-        page.setOffset(offset);
-        page.setTotal(total);
-        page.setResult(orderList);
-
-        return ResponseEntity.status(HttpStatus.OK).body(page);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<?> createOrder(@PathVariable Integer userId,
                                          @RequestBody @Valid  CreateOrderRequest createOrderRequest) {
-
-        Integer orderId = orderService.createOrder(userId, createOrderRequest);
-
-        Order order = orderService.getOrderById(orderId);
+        Order order = orderService.createOrder(userId, createOrderRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }

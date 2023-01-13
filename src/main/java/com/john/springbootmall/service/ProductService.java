@@ -5,8 +5,6 @@ import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface ProductService {
 
     Product getProductById(Integer productId);

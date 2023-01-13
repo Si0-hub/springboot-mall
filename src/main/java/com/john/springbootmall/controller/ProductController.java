@@ -16,7 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Validated
@@ -76,23 +75,23 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<Map<String, Object>> getProducts(
             @RequestParam(required = false) ProductCategory category,
-            @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort,
+            @RequestParam(defaultValue = "createdDate") String orderBy,
+            @RequestParam(defaultValue = "DESC") String sort,
             @RequestParam(defaultValue = "0") @Max(1000) @Min(0) Integer page,
-            @RequestParam(defaultValue = "5") @Max(100) @Min(5) Integer size
+            @RequestParam(defaultValue = "5") @Max(100) @Min(0) Integer size
     ) {
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setPage(page);
         productQueryParams.setSize(size);
-//        productQueryParams.setOrderBy(orderBy);
-//        productQueryParams.setSort(sort);
+        productQueryParams.setOrderBy(orderBy);
+        productQueryParams.setSort(sort.toUpperCase());
 
         // 取得 商品的列表
         Page<Product> productPage = productService.getProducts(productQueryParams);
 
+        // 回傳集
         Map<String, Object> response = new HashMap<>();
-
         response.put("dataList", productPage.getContent());
         response.put("totalPages", productPage.getTotalPages());
         response.put("totalData", productPage.getTotalElements());

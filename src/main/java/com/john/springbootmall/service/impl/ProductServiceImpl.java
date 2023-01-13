@@ -9,6 +9,7 @@ import com.john.springbootmall.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,16 +55,28 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProductById(Integer productId) {
-        productDao.deleteById(productId);
+        Product product = productDao.findByProductId(productId);
+        if (product != null) {
+            productDao.deleteById(productId);
+        }
+
     }
 
     @Override
     public Page<Product> getProducts(ProductQueryParams productQueryParams) {
-        Pageable pageable = PageRequest.of(productQueryParams.getPage(), productQueryParams.getSize());
         ProductCategory productCategory = productQueryParams.getCategory();
 
-        Page<Product>  productPage;
+        // 判斷前端sort方式
+        Sort sort = null;
+        if ("DESC".equals(productQueryParams.getSort())) {
+            sort = Sort.by(Sort.Direction.DESC, productQueryParams.getOrderBy());
+        } else {
+            sort = Sort.by(Sort.Direction.ASC, productQueryParams.getOrderBy());
+        }
 
+        Pageable pageable = PageRequest.of(productQueryParams.getPage(), productQueryParams.getSize(), sort);
+
+        Page<Product>  productPage;
         if (productCategory == null) {
             productPage = productDao.findAll(pageable);
         } else {

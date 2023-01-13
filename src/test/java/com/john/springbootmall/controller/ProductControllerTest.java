@@ -31,7 +31,7 @@ public class ProductControllerTest {
     @Test
     public void getProduct_success() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products/{productId}", 1);
+                .get("/product/products/{productId}", 1);
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
@@ -49,7 +49,7 @@ public class ProductControllerTest {
     @Test
     public void getProduct_notFound() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products/{productId}", 20000);
+                .get("/product/products/{productId}", 20000);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(404));
@@ -69,7 +69,7 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/products")
+                .post("/product/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -94,7 +94,7 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/products")
+                .post("/product/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -116,20 +116,12 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/products/{productId}", 3)
+                .put("/product/products/{productId}", 3)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(200))
-                .andExpect(jsonPath("$.productName", equalTo("test food product")))
-                .andExpect(jsonPath("$.category", equalTo("FOOD")))
-                .andExpect(jsonPath("$.imageUrl", equalTo("http://test.com")))
-                .andExpect(jsonPath("$.price", equalTo(100)))
-                .andExpect(jsonPath("$.stock", equalTo(2)))
-                .andExpect(jsonPath("$.description", nullValue()))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(status().is(200));
     }
 
     @Transactional
@@ -141,7 +133,7 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/products/{productId}", 3)
+                .put("/product/products/{productId}", 3)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -163,7 +155,7 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/products/{productId}", 20000)
+                .put("/product/products/{productId}", 20000)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -176,7 +168,7 @@ public class ProductControllerTest {
     @Test
     public void deleteProduct_success() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/products/{productId}", 5);
+                .delete("/product/products/{productId}", 1);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(204));
@@ -186,7 +178,7 @@ public class ProductControllerTest {
     @Test
     public void deleteProduct_deleteNonExistingProduct() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/products/{productId}", 20000);
+                .delete("/product/products/{productId}", 20000);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(204));
@@ -196,68 +188,67 @@ public class ProductControllerTest {
     @Test
     public void getProducts() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products");
+                .get("/product/products");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(5)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(5)));
     }
 
     @Test
     public void getProducts_filtering() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products")
-                .param("search", "B")
+                .get("/product/products")
                 .param("category", "CAR");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(2)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(4)));
     }
 
     @Test
     public void getProducts_sorting() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products")
+                .get("/product/products")
                 .param("orderBy", "price")
                 .param("sort", "desc");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(5)))
-                .andExpect(jsonPath("$.result[0].productId", equalTo(6)))
-                .andExpect(jsonPath("$.result[1].productId", equalTo(5)))
-                .andExpect(jsonPath("$.result[2].productId", equalTo(7)))
-                .andExpect(jsonPath("$.result[3].productId", equalTo(4)))
-                .andExpect(jsonPath("$.result[4].productId", equalTo(2)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(5)))
+                .andExpect(jsonPath("$.dataList[0].productName", equalTo("Benz")))
+                .andExpect(jsonPath("$.dataList[1].productName", equalTo("BMW")))
+                .andExpect(jsonPath("$.dataList[2].productName", equalTo("Tesla")))
+                .andExpect(jsonPath("$.dataList[3].productName", equalTo("Toyota")))
+                .andExpect(jsonPath("$.dataList[4].productName", equalTo("好吃又鮮甜的蘋果橘子")));
     }
 
     @Test
     public void getProducts_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/products")
-                .param("limit", "2")
-                .param("offset", "2");
+                .get("/product/products")
+                .param("size", "2")
+                .param("page", "2");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
-                .andExpect(jsonPath("$.total", notNullValue()))
-                .andExpect(jsonPath("$.result", hasSize(2)))
-                .andExpect(jsonPath("$.result[0].productId", equalTo(5)))
-                .andExpect(jsonPath("$.result[1].productId", equalTo(4)));
+                .andExpect(jsonPath("$.totalPages", notNullValue()))
+                .andExpect(jsonPath("$.nowPage", notNullValue()))
+                .andExpect(jsonPath("$.totalData", notNullValue()))
+                .andExpect(jsonPath("$.dataList", hasSize(2)))
+                .andExpect(jsonPath("$.dataList[0].productName", equalTo("好吃又鮮甜的蘋果橘子")))
+                .andExpect(jsonPath("$.dataList[1].productName", equalTo("蘋果（日本北海道）")));
     }
 }

@@ -9,15 +9,12 @@ import com.john.springbootmall.dto.OrderQueryParams;
 import com.john.springbootmall.model.Order;
 import com.john.springbootmall.model.OrderItem;
 import com.john.springbootmall.entity.Product;
-import com.john.springbootmall.model.User;
 import com.john.springbootmall.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,12 +55,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
         // 檢查user是否存在
-        User user = userDao.getUserById(userId);
-
-        if (user == null) {
-            log.warn("該userId {} 不存在!!", userId);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+//
+//        if (user == null) {
+//            log.warn("該userId {} 不存在!!", userId);
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
 
         int totalAmount = 0;
         List<OrderItem> orderItemList = new ArrayList<>();

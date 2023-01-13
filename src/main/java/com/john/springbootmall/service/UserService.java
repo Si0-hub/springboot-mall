@@ -2,13 +2,11 @@ package com.john.springbootmall.service;
 
 import com.john.springbootmall.dto.UserLoginRequest;
 import com.john.springbootmall.dto.UserRegisterRequest;
-import com.john.springbootmall.model.User;
+import com.john.springbootmall.entity.User;
 
 public interface UserService {
 
-    Integer register(UserRegisterRequest userRegisterRequest);
-
-    User getUserById(Integer userId);
+    User register(UserRegisterRequest userRegisterRequest);
 
     User login(UserLoginRequest userLoginRequest);
 }

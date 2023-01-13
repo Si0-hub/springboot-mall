@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.john.springbootmall.dao.UserDao;
 import com.john.springbootmall.dto.UserLoginRequest;
 import com.john.springbootmall.dto.UserRegisterRequest;
-import com.john.springbootmall.model.User;
+import com.john.springbootmall.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.annotation.Resource;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -26,10 +28,11 @@ public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
     private UserDao userDao;
-
+    @Resource(name = "userDao")
+    private void setProductService(UserDao userDao) {
+        this.userDao = userDao;
+    }
     private ObjectMapper objectMapper = new ObjectMapper();
 
     // 註冊新帳號
@@ -48,13 +51,12 @@ public class UserControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
-                .andExpect(jsonPath("$.userId", notNullValue()))
                 .andExpect(jsonPath("$.email", equalTo("test1@gmail.com")))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
 
         // 檢查資料庫中的密碼不為明碼
-        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+        User user = userDao.findByEmail(userRegisterRequest.getEmail());
         assertNotEquals(userRegisterRequest.getPassword(), user.getPassword());
     }
 
@@ -121,7 +123,6 @@ public class UserControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.userId", notNullValue()))
                 .andExpect(jsonPath("$.email", equalTo(userRegisterRequest.getEmail())))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));

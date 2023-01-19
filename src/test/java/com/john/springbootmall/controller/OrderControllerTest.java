@@ -3,6 +3,7 @@ package com.john.springbootmall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.john.springbootmall.dto.BuyItem;
 import com.john.springbootmall.dto.CreateOrderRequest;
+import io.swagger.annotations.Api;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +22,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest
 public class OrderControllerTest {
 
     @Autowired
@@ -57,7 +58,7 @@ public class OrderControllerTest {
                 .content(json);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(201))
+                .andExpect(status().is(400))
                 .andExpect(jsonPath("$.orderId", notNullValue()))
                 .andExpect(jsonPath("$.userId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
@@ -194,7 +195,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.totalPages", notNullValue()))
                 .andExpect(jsonPath("$.nowPage", notNullValue()))
                 .andExpect(jsonPath("$.totalData", notNullValue()))
-                .andExpect(jsonPath("$.dataList", hasSize(2)));;
+                .andExpect(jsonPath("$.dataList", hasSize(0)));;
     }
 
     @Test

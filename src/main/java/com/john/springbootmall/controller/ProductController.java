@@ -5,6 +5,10 @@ import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,7 @@ import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = "商品相關api")
 @Validated
 @RestController
 @RequestMapping("/product")
@@ -30,6 +35,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @ApiOperation("取得選擇商品的資訊")
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
         Product product = productService.getProductById(productId);
@@ -41,6 +47,7 @@ public class ProductController {
         }
     }
 
+    @ApiOperation("創建商品")
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
         Product product = productService.createProduct(productRequest);
@@ -48,6 +55,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    @ApiOperation("更新商品")
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest) {
@@ -65,6 +73,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation("刪除商品")
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<Product> deleteProductById(@PathVariable Integer productId) {
         productService.deleteProductById(productId);
@@ -72,6 +81,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @ApiOperation("取得所有商品")
     @GetMapping("/products")
     public ResponseEntity<Map<String, Object>> getProducts(
             @RequestParam(required = false) ProductCategory category,

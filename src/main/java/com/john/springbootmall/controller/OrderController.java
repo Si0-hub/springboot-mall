@@ -4,6 +4,8 @@ import com.john.springbootmall.dto.CreateOrderRequest;
 import com.john.springbootmall.dto.OrderQueryParams;
 import com.john.springbootmall.entity.Order;
 import com.john.springbootmall.service.OrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "購物清單相關api")
 @Validated
 @RestController
 public class OrderController {
@@ -29,6 +32,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @ApiOperation("取得該使用者的購買清單")
     @GetMapping("/users/{userId}/orders")
     public  ResponseEntity<Map<String, Object>> getOrders(
             @PathVariable Integer userId,
@@ -46,6 +50,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @ApiOperation("創建購買清單")
     @PostMapping("/users/{userId}/orders")
     public ResponseEntity<?> createOrder(@PathVariable Integer userId,
                                          @RequestBody @Valid  CreateOrderRequest createOrderRequest) {
@@ -53,4 +58,5 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
+
 }

@@ -85,6 +85,8 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<Map<String, Object>> getProducts(
             @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String price,
             @RequestParam(defaultValue = "createdDate") String orderBy,
             @RequestParam(defaultValue = "DESC") String sort,
             @RequestParam(defaultValue = "0") @Max(1000) @Min(0) Integer page,
@@ -92,6 +94,8 @@ public class ProductController {
     ) {
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
+        productQueryParams.setProuductName(productName);
+        productQueryParams.setPrice(price);
         productQueryParams.setPage(page);
         productQueryParams.setSize(size);
         productQueryParams.setOrderBy(orderBy);

@@ -11,7 +11,8 @@ import lombok.Setter;
 public class ProductQueryParams {
 
     private ProductCategory category;
-    private String search;
+    private String prouductName;
+    private String price;
     private String orderBy;
     private String sort;
     private Integer page;

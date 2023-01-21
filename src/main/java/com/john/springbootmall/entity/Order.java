@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "`order`")
+@Table(name = "orders")
 @Getter
 @Setter
 @NoArgsConstructor

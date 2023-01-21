@@ -127,6 +127,7 @@ public class OrderServiceImpl implements OrderService {
         orderItemList.forEach(orderItem -> orderItem.setOrderId(order.getOrderId()));
         orderItemDao.saveAll(orderItemList);
 
+        order.setOrderItemList(orderItemList);
         return order;
     }
 }

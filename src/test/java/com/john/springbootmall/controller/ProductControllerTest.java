@@ -231,7 +231,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.dataList[1].productName", equalTo("BMW")))
                 .andExpect(jsonPath("$.dataList[2].productName", equalTo("Tesla")))
                 .andExpect(jsonPath("$.dataList[3].productName", equalTo("Toyota")))
-                .andExpect(jsonPath("$.dataList[4].productName", equalTo("好吃又鮮甜的蘋果橘子")));
+                .andExpect(jsonPath("$.dataList[4].productName", equalTo("蘋果（日本北海道）")));
     }
 
     @Test

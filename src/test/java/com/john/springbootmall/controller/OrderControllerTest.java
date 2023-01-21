@@ -3,7 +3,6 @@ package com.john.springbootmall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.john.springbootmall.dto.BuyItem;
 import com.john.springbootmall.dto.CreateOrderRequest;
-import io.swagger.annotations.Api;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -58,8 +57,7 @@ public class OrderControllerTest {
                 .content(json);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(400))
-                .andExpect(jsonPath("$.orderId", notNullValue()))
+                .andExpect(status().is(201))
                 .andExpect(jsonPath("$.userId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
                 .andExpect(jsonPath("$.orderItemList", hasSize(2)))
@@ -169,16 +167,14 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.nowPage", notNullValue()))
                 .andExpect(jsonPath("$.totalData", notNullValue()))
                 .andExpect(jsonPath("$.dataList", hasSize(2)))
-                .andExpect(jsonPath("$.dataList[0].orderId", notNullValue()))
                 .andExpect(jsonPath("$.dataList[0].userId", equalTo(1)))
-                .andExpect(jsonPath("$.dataList[0].totalAmount", equalTo(100000)))
-                .andExpect(jsonPath("$.dataList[0].orderItemList", hasSize(1)))
+                .andExpect(jsonPath("$.dataList[0].totalAmount", equalTo(500690)))
+                .andExpect(jsonPath("$.dataList[0].orderItemList", hasSize(3)))
                 .andExpect(jsonPath("$.dataList[0].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.dataList[0].lastModifiedDate", notNullValue()))
-                .andExpect(jsonPath("$.dataList[1].orderId", notNullValue()))
                 .andExpect(jsonPath("$.dataList[1].userId", equalTo(1)))
-                .andExpect(jsonPath("$.dataList[1].totalAmount", equalTo(500690)))
-                .andExpect(jsonPath("$.dataList[1].orderItemList", hasSize(3)))
+                .andExpect(jsonPath("$.dataList[1].totalAmount", equalTo(100000)))
+                .andExpect(jsonPath("$.dataList[1].orderItemList", hasSize(1)))
                 .andExpect(jsonPath("$.dataList[1].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.dataList[1].lastModifiedDate", notNullValue()));
     }

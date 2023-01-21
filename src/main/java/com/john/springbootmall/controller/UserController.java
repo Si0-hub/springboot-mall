@@ -37,9 +37,9 @@ public class UserController {
 
     @ApiOperation("登入")
     @PostMapping("/users/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
-        User user = userService.login(userLoginRequest);
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        String result = userService.login(userLoginRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        return ResponseEntity.ok(result);
     }
 }

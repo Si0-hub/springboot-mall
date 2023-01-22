@@ -5,12 +5,10 @@ import com.john.springbootmall.dto.UserLoginRequest;
 import com.john.springbootmall.dto.UserRegisterRequest;
 import com.john.springbootmall.entity.User;
 import com.john.springbootmall.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.john.springbootmall.util.JwtToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
@@ -67,14 +65,9 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
 
         if (user.get().getPassword().equals(hashedPassword)) {
-            // 設定30min過期
-            Date expireDate = new Date(System.currentTimeMillis()+ 30 * 60 * 1000);
-            String jwtToken = Jwts.builder()
-                            .setSubject(user.get().getEmail()) // 以email當subject
-                            .setExpiration(expireDate)
-                            .signWith(SignatureAlgorithm.HS512,"MySecret") // MySecret是自訂的私鑰，HS512是自選的演算法，可以任意改變
-                            .compact();
-            return jwtToken;
+            JwtToken jwtToken = new JwtToken();
+            String token = jwtToken.generateToken(user.get());
+            return token;
         } else {
             log.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

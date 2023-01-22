@@ -5,10 +5,9 @@ import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
+import com.john.springbootmall.util.JwtToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -49,7 +49,16 @@ public class ProductController {
 
     @ApiOperation("創建商品")
     @PostMapping("/products")
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity createProduct(@RequestHeader("Authorization") String au,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+        try {
+            JwtToken jwtToken = new JwtToken();
+            jwtToken.validateToken(au);
+        } catch (AuthException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+
+
         Product product = productService.createProduct(productRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);

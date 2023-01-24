@@ -35,8 +35,8 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @ApiOperation("取得選擇商品的資訊")
-    @GetMapping("/products/{productId}")
+    @ApiOperation("取得商品資訊")
+    @GetMapping("/getProducts/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
         Product product = productService.getProductById(productId);
 
@@ -48,17 +48,9 @@ public class ProductController {
     }
 
     @ApiOperation("創建商品")
-    @PostMapping("/products")
+    @PostMapping("/products/create")
     public ResponseEntity createProduct(@RequestHeader("Authorization") String au,
-                                                 @RequestBody @Valid ProductRequest productRequest) {
-        try {
-            JwtToken jwtToken = new JwtToken();
-            jwtToken.validateToken(au);
-        } catch (AuthException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        }
-
-
+                                        @RequestBody @Valid ProductRequest productRequest) {
         Product product = productService.createProduct(productRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
@@ -91,7 +83,7 @@ public class ProductController {
     }
 
     @ApiOperation("取得所有商品")
-    @GetMapping("/products")
+    @GetMapping("/getProducts")
     public ResponseEntity<Map<String, Object>> getProducts(
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String productName,

@@ -23,6 +23,7 @@ import java.util.Map;
 @Api(tags = "購物清單相關api")
 @Validated
 @RestController
+@RequestMapping("/order")
 public class OrderController {
 
     private OrderService orderService;

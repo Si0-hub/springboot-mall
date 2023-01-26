@@ -1,5 +1,6 @@
 package com.john.springbootmall.service.impl;
 
+import com.john.springbootmall.constant.impl.UserRole;
 import com.john.springbootmall.dao.UserDao;
 import com.john.springbootmall.dto.UserLoginRequest;
 import com.john.springbootmall.dto.UserRegisterRequest;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
         userRegisterRequest.setPassword(hashedPassword);
 
         User registerUser = new User(userRegisterRequest);
+        registerUser.setRole(UserRole.MEMBER);
 
         Date today = new Date();
         registerUser.setCreatedDate(today);

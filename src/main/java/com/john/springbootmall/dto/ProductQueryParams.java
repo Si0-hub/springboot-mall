@@ -1,6 +1,6 @@
 package com.john.springbootmall.dto;
 
-import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.constant.impl.ProductCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

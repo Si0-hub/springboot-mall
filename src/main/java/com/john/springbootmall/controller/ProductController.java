@@ -1,11 +1,10 @@
 package com.john.springbootmall.controller;
 
-import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.constant.impl.ProductCategory;
 import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.service.ProductService;
-import com.john.springbootmall.util.JwtToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

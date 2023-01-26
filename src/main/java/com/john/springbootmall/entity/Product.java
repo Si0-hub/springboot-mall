@@ -1,9 +1,8 @@
 package com.john.springbootmall.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.constant.impl.ProductCategory;
 import com.john.springbootmall.dto.ProductRequest;
-import com.john.springbootmall.util.CategoryConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,7 +36,7 @@ public class Product {
     private String productName;
 
     @Column(name = "category")
-    @Convert(converter = CategoryConverter.class)
+    @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
     @Column(name = "image_url")

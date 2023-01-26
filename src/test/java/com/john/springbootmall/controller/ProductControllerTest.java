@@ -1,7 +1,7 @@
 package com.john.springbootmall.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.constant.impl.ProductCategory;
 import com.john.springbootmall.dto.ProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

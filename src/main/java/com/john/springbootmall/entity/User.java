@@ -2,6 +2,7 @@ package com.john.springbootmall.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.john.springbootmall.constant.impl.UserRole;
 import com.john.springbootmall.dto.UserRegisterRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,13 @@ public class User {
     @JsonIgnore
     @Column(name = "password")
     private String password;
+
+    @Column(name = "enabled")
+    private Boolean enabled = true;
+
+    @Column(name = "role")
+    @Convert(converter = UserRole.Coverter.class)
+    private UserRole role;
 
     @Column(name = "created_date", updatable = false)
     private Date createdDate;

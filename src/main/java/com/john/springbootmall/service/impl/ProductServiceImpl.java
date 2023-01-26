@@ -1,6 +1,6 @@
 package com.john.springbootmall.service.impl;
 
-import com.john.springbootmall.constant.ProductCategory;
+import com.john.springbootmall.constant.impl.ProductCategory;
 import com.john.springbootmall.dao.ProductDao;
 import com.john.springbootmall.dto.ProductQueryParams;
 import com.john.springbootmall.dto.ProductRequest;

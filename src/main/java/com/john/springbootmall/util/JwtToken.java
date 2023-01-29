@@ -14,9 +14,9 @@ import java.util.Map;
 public class JwtToken {
 
     /**
-     * JWT VALIID TIME 1Min
+     * JWT VALIID TIME 30Min
      */
-    private static final long EXPIRATION_TIME = 1 * 60 * 1000;
+    private static final long EXPIRATION_TIME = 30 * 60 * 1000;
     /**
      * JWT SECRET KEY
      */

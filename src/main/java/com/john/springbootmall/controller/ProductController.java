@@ -47,8 +47,7 @@ public class ProductController {
 
     @ApiOperation("創建商品")
     @PostMapping("/products/create")
-    public ResponseEntity createProduct(@RequestHeader("Authorization") String au,
-                                        @RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity createProduct(@RequestBody @Valid ProductRequest productRequest) {
         Product product = productService.createProduct(productRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);

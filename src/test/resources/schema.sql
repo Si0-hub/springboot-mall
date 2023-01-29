@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS product
+CREATE TABLE IF NOT EXISTS products
 (
     product_id         INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
     product_name       VARCHAR(128)  NOT NULL,
@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS users
     user_id            INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
     email              VARCHAR(256) NOT NULL UNIQUE,
     password           VARCHAR(256) NOT NULL,
+    role               INT NOT NULL,
+    enabled            boolean,
     created_date       TIMESTAMP    NOT NULL,
     last_modified_date TIMESTAMP    NOT NULL
     );
@@ -29,7 +31,7 @@ CREATE TABLE IF NOT EXISTS orders
     last_modified_date TIMESTAMP NOT NULL
     );
 
-CREATE TABLE IF NOT EXISTS order_item
+CREATE TABLE IF NOT EXISTS order_items
 (
     order_item_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     order_id      INT NOT NULL,

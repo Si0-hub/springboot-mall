@@ -3,6 +3,8 @@ package com.john.springbootmall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.john.springbootmall.dto.BuyItem;
 import com.john.springbootmall.dto.CreateOrderRequest;
+import com.john.springbootmall.dto.UserLoginRequest;
+import com.john.springbootmall.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,6 +15,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +31,21 @@ public class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private UserService userService;
+
+    @Resource(name = "userServiceImpl")
+    private void setProductService(UserService userService) {
+        this.userService = userService;
+    }
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     // 創建訂單
     @Transactional
     @Test
     public void createOrder_success() throws Exception {
+        String au = login();
+
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         List<BuyItem> buyItemList = new ArrayList<>();
 
@@ -52,7 +64,9 @@ public class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -68,6 +82,8 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_illegalArgument_emptyBuyItemList() throws Exception {
+        String au = login();
+
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         List<BuyItem> buyItemList = new ArrayList<>();
         createOrderRequest.setBuyItemList(buyItemList);
@@ -75,7 +91,9 @@ public class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -86,6 +104,8 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_userNotExist() throws Exception {
+        String au = login();
+
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         List<BuyItem> buyItemList = new ArrayList<>();
 
@@ -99,7 +119,9 @@ public class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 100)
+                .post("/order/users/{userId}/orders", 100)
+                .servletPath("/order/users/100/orders")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -110,6 +132,8 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_productNotExist() throws Exception {
+        String au = login();
+
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         List<BuyItem> buyItemList = new ArrayList<>();
 
@@ -123,7 +147,9 @@ public class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -134,6 +160,8 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_stockNotEnough() throws Exception {
+        String au = login();
+
         CreateOrderRequest createOrderRequest = new CreateOrderRequest();
         List<BuyItem> buyItemList = new ArrayList<>();
 
@@ -147,7 +175,9 @@ public class OrderControllerTest {
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/users/{userId}/orders", 1)
+                .post("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -158,8 +188,12 @@ public class OrderControllerTest {
     // 查詢訂單列表
     @Test
     public void getOrders() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1);
+                .get("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -181,8 +215,12 @@ public class OrderControllerTest {
 
     @Test
     public void getOrders_pagination() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 1)
+                .get("/order/users/{userId}/orders", 1)
+                .servletPath("/order/users/1/orders")
+                .header("Authorization", au)
                 .param("page", "1")
                 .param("size", "2");
 
@@ -191,13 +229,18 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.totalPages", notNullValue()))
                 .andExpect(jsonPath("$.nowPage", notNullValue()))
                 .andExpect(jsonPath("$.totalData", notNullValue()))
-                .andExpect(jsonPath("$.dataList", hasSize(0)));;
+                .andExpect(jsonPath("$.dataList", hasSize(0)));
+        ;
     }
 
     @Test
     public void getOrders_userHasNoOrder() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 2);
+                .get("/order/users/{userId}/orders", 2)
+                .servletPath("/order/users/2/orders")
+                .header("Authorization", au);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -209,8 +252,12 @@ public class OrderControllerTest {
 
     @Test
     public void getOrders_userNotExist() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/users/{userId}/orders", 100);
+                .get("/order/users/{userId}/orders", 100)
+                .servletPath("/order/users/100/orders")
+                .header("Authorization", au);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -218,5 +265,12 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.nowPage", notNullValue()))
                 .andExpect(jsonPath("$.totalData", notNullValue()))
                 .andExpect(jsonPath("$.dataList", hasSize(0)));
+    }
+
+    private String login() throws Exception {
+        UserLoginRequest userRegisterRequest = new UserLoginRequest();
+        userRegisterRequest.setEmail("user1@gmail.com");
+        userRegisterRequest.setPassword("123");
+        return userService.login(userRegisterRequest);
     }
 }

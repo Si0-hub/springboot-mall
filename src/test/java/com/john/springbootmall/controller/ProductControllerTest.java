@@ -3,6 +3,8 @@ package com.john.springbootmall.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.john.springbootmall.constant.impl.ProductCategory;
 import com.john.springbootmall.dto.ProductRequest;
+import com.john.springbootmall.dto.UserLoginRequest;
+import com.john.springbootmall.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,13 +29,21 @@ public class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private UserService userService;
+
+    @Resource(name = "userServiceImpl")
+    private void setProductService(UserService userService) {
+        this.userService = userService;
+    }
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     // 查詢商品
     @Test
     public void getProduct_success() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products/{productId}", 1);
+                .get("/product/getProducts/{productId}", 1)
+                .servletPath("/product/getProducts/1");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
@@ -49,7 +61,8 @@ public class ProductControllerTest {
     @Test
     public void getProduct_notFound() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products/{productId}", 20000);
+                .get("/product/getProducts/{productId}", 20000)
+                .servletPath("/product/getProducts/20000");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(404));
@@ -59,6 +72,8 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void createProduct_success() throws Exception {
+        String au = login();
+
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
@@ -69,7 +84,9 @@ public class ProductControllerTest {
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/product/products")
+                .post("/product/products/create")
+                .servletPath("/product/products/create")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -88,13 +105,17 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void createProduct_illegalArgument() throws Exception {
+        String au = login();
+
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductName("test food product");
 
         String json = objectMapper.writeValueAsString(productRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/product/products")
+                .post("/product/products/create")
+                .servletPath("/product/products/create")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -106,6 +127,8 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_success() throws Exception {
+        String au = login();
+
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
@@ -117,6 +140,8 @@ public class ProductControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/product/products/{productId}", 3)
+                .servletPath("/product/products/3")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -127,6 +152,8 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_illegalArgument() throws Exception {
+        String au = login();
+
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductName("test food product");
 
@@ -134,6 +161,8 @@ public class ProductControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/product/products/{productId}", 3)
+                .servletPath("/product/products/3")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -145,6 +174,8 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_productNotFound() throws Exception {
+        String au = login();
+
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
@@ -156,6 +187,8 @@ public class ProductControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/product/products/{productId}", 20000)
+                .servletPath("/product/products/20000")
+                .header("Authorization", au)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -167,8 +200,12 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void deleteProduct_success() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/product/products/{productId}", 1);
+                .delete("/product/products/{productId}", 1)
+                .servletPath("/product/products/1")
+                .header("Authorization", au);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(204));
@@ -177,8 +214,12 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void deleteProduct_deleteNonExistingProduct() throws Exception {
+        String au = login();
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/product/products/{productId}", 20000);
+                .delete("/product/products/{productId}", 20000)
+                .servletPath("/product/products/20000")
+                .header("Authorization", au);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(204));
@@ -188,7 +229,8 @@ public class ProductControllerTest {
     @Test
     public void getProducts() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products");
+                .get("/product/getProducts")
+                .servletPath("/product/getProducts");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
@@ -202,7 +244,8 @@ public class ProductControllerTest {
     @Test
     public void getProducts_filtering() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products")
+                .get("/product/getProducts")
+                .servletPath("/product/getProducts")
                 .param("category", "CAR");
 
         mockMvc.perform(requestBuilder)
@@ -216,7 +259,8 @@ public class ProductControllerTest {
     @Test
     public void getProducts_sorting() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products")
+                .get("/product/getProducts")
+                .servletPath("/product/getProducts")
                 .param("orderBy", "price")
                 .param("sort", "desc");
 
@@ -237,7 +281,8 @@ public class ProductControllerTest {
     @Test
     public void getProducts_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/product/products")
+                .get("/product/getProducts")
+                .servletPath("/product/getProducts")
                 .param("size", "2")
                 .param("page", "2");
 
@@ -250,5 +295,12 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.dataList", hasSize(2)))
                 .andExpect(jsonPath("$.dataList[0].productName", equalTo("好吃又鮮甜的蘋果橘子")))
                 .andExpect(jsonPath("$.dataList[1].productName", equalTo("蘋果（日本北海道）")));
+    }
+
+    private String login() throws Exception {
+        UserLoginRequest userRegisterRequest = new UserLoginRequest();
+        userRegisterRequest.setEmail("user1@gmail.com");
+        userRegisterRequest.setPassword("123");
+        return userService.login(userRegisterRequest);
     }
 }

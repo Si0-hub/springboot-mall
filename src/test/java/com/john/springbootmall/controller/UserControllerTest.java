@@ -46,6 +46,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/register")
+                .servletPath("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -56,7 +57,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
 
         // 檢查資料庫中的密碼不為明碼
-        User user = userDao.findByEmail(userRegisterRequest.getEmail());
+        User user = userDao.findByEmail(userRegisterRequest.getEmail()).get();
         assertNotEquals(userRegisterRequest.getPassword(), user.getPassword());
     }
 
@@ -70,6 +71,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/register")
+                .servletPath("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -88,6 +90,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/register")
+                .servletPath("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -118,14 +121,12 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/login")
+                .servletPath("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(status().is(200))
-                .andExpect(jsonPath("$.email", equalTo(userRegisterRequest.getEmail())))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(status().is(200));
     }
 
     @Test
@@ -146,6 +147,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/login")
+                .servletPath("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -163,6 +165,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/login")
+                .servletPath("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -180,6 +183,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/login")
+                .servletPath("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 
@@ -192,6 +196,7 @@ public class UserControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/register")
+                .servletPath("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);
 

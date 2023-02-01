@@ -12,6 +12,7 @@ import com.john.springbootmall.entity.OrderItem;
 import com.john.springbootmall.entity.Product;
 import com.john.springbootmall.entity.User;
 import com.john.springbootmall.service.OrderService;
+import com.john.springbootmall.util.JwtToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -19,18 +20,26 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.Resource;
+import javax.security.auth.message.AuthException;
 import java.util.*;
 
-@Component
+@Service
 public class OrderServiceImpl implements OrderService {
+
+    private JwtToken jwtToken;
     private OrderDao orderDao;
     private OrderItemDao orderItemDao;
     private UserDao userDao;
     private ProductDao productDao;
+    @Resource(name = "jwtToken")
+    private void setJwtToken(JwtToken jwtToken) {
+        this.jwtToken = jwtToken;
+    }
     @Resource(name = "orderDao")
     private void OrderDao(OrderDao orderDao) {
         this.orderDao = orderDao;
@@ -51,9 +60,13 @@ public class OrderServiceImpl implements OrderService {
     private final static Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public Map<String, Object> getOrders(OrderQueryParams orderQueryParams) {
+    public Map<String, Object> getOrders(OrderQueryParams orderQueryParams, String au) throws AuthException {
+        // 解析token
+        Map<String, Object> userInfoMap = jwtToken.analyzeToken(au);
+        Integer userId = (Integer) userInfoMap.get("userId");
+
         Pageable pageable = PageRequest.of(orderQueryParams.getPage(), orderQueryParams.getSize());
-        Page<Order> orderPage = orderDao.findAllByUserId(orderQueryParams.getUserId(), pageable);
+        Page<Order> orderPage = orderDao.findAllByUserId(userId, pageable);
 
         // 查出每筆明細
         List<Order> orderList = orderPage.getContent();
@@ -74,7 +87,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
+    public Order createOrder(String au, CreateOrderRequest createOrderRequest) throws AuthException {
+        // 解析token
+        Map<String, Object> userInfoMap = jwtToken.analyzeToken(au);
+        Integer userId = (Integer) userInfoMap.get("userId");
+
         // 檢查user是否存在
         Boolean userExist = userDao.existsById(userId);
         if (!userExist) {
